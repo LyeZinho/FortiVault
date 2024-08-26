@@ -20,6 +20,93 @@ These incidents highlight the risks associated with storing personal data on cen
 - **Cross-Platform Compatibility:** Available for Windows, macOS, Linux, Android, and iOS.
 - **Backup and Recovery:** Secure backups and recovery options to safeguard against data loss.
 
+## System
+
+```
++------------------------------------------------------+
+|                FortiVault Architecture               |
++------------------------------------------------------+
+
++---------------------------+      +---------------------------+
+|                           |      |                           |
+|      Client (Local App)   |<---->|     Dedicated Server/NAS  |
+|                           |      |                           |
+| +-----------------------+ |      | +-----------------------+ |
+| |                       | |      | |                       | |
+| |    Password Storage   | |      | |    Password Storage   | |
+| |    (Encrypted)        | |<---->| |    (Encrypted)        | |
+| |                       | |      | |                       | |
+| +-----------------------+ |      | +-----------------------+ |
+|                           |      |                           |
+| +-----------------------+ |      | +-----------------------+ |
+| |                       | |      | |                       | |
+| |   Backup Manager      | |      | |   Backup Manager      | |
+| | (Local & Remote)      | |<---->| | (Server Backup)       | |
+| |                       | |      | |                       | |
+| +-----------------------+ |      | +-----------------------+ |
+|                           |      |                           |
+| +-----------------------+ |      | +-----------------------+ |
+| |                       | |      | |                       | |
+| |   Encryption Module   | |      | |   Encryption Module   | |
+| |  (AES-256, Argon2)    | |      | |  (AES-256, Argon2)    | |
+| |                       | |      | |                       | |
+| +-----------------------+ |      | +-----------------------+ |
+|                           |      |                           |
+| +-----------------------+ |      | +-----------------------+ |
+| |                       | |      | |                       | |
+| |   P2P Sync Manager    | |<---->| |   P2P Sync Manager    | |
+| |  (libp2p)             | |      | |  (libp2p)             | |
+| |                       | |      | |                       | |
+| +-----------------------+ |      | +-----------------------+ |
+|                           |      |                           |
+| +-----------------------+ |      | +-----------------------+ |
+| |                       | |      | |                       | |
+| |   Authentication      | |      | |   Authentication      | |
+| |   & Authorization     | |<---->| |   & Authorization     | |
+| |  (MFA, JWT, etc.)     | |      | |  (MFA, JWT, etc.)     | |
+| |                       | |      | |                       | |
+| +-----------------------+ |      | +-----------------------+ |
+|                           |      |                           |
++---------------------------+      +---------------------------+
+
++-------------------------------+  +-------------------------------+
+|           User Interface      |  |    Network & Security Layers  |
++-------------------------------+  +-------------------------------+
+|                               |  |                               |
+| +---------------------------+ |  | +---------------------------+ |
+| |   Next.js Frontend        | |  | |   TLS/SSL Encryption      | |
+| |   (React, Tauri)          | |  | |   Secure Communication    | |
+| +---------------------------+ |  | +---------------------------+ |
+|                               |  |                               |
+| +---------------------------+ |  | +---------------------------+ |
+| |   API Communication       | |  | |   API Security Layer      | |
+| |   (Rust, Tauri)           | |  | |   (JWT, OAuth2, etc.)     | |
+| +---------------------------+ |  | +---------------------------+ |
++-------------------------------+  +-------------------------------+
+```
+
+### Explaination
+
+Client (local application):
+   - Password Storage: Stores passwords in encrypted form locally on the device.
+   - Backup Manager: Manages local and remote backups. In case of dedicated servers, sync with them.
+   - Encryption module: Performs data encryption using AES-256 and key derivation using Argon2.
+   - P2P Sync Manager: Manages peer-to-peer synchronization between devices, ensuring that passwords are always up to date.
+   - Authentication and Authorization: Implements authentication and authorization mechanisms, such as MFA and JWT.
+
+Dedicated Server/NAS:
+   - It works as a dedicated server where users can store their passwords, sync between devices and keep secure backups.
+   - It shares the same functionalities as the local client, but operates on a dedicated server.
+
+User Interface:
+   - Next.js Frontend: User interface built with Next.js and React, integrated with Tauri to enable desktop functionality.
+   - API Communication: Communication between frontend and backend is done securely using Rust and Tauri.
+
+Network and security layers:
+   - TLS/SSL encryption: Ensures that all communications between client and server are secure.
+   - API Security Layer: Protects APIs with mechanisms like JWT, OAuth2, and other security practices.
+
+
 ## Getting Started
 
 To get started with FortiVault, follow these steps:
