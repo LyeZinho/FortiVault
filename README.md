@@ -106,6 +106,47 @@ Network and security layers:
    - TLS/SSL encryption: Ensures that all communications between client and server are secure.
    - API Security Layer: Protects APIs with mechanisms like JWT, OAuth2, and other security practices.
 
+```
+/fortivault
+    /client
+        /src
+        /public
+        /components
+        /services
+        /pages
+        /assets
+        /hooks
+        /utils
+        /config
+        /tests
+        next.config.js
+        package.json
+        README.md
+    /server
+        /src
+        /config
+        /routes
+        /models
+        /services
+        /tests
+        Cargo.toml
+        README.md
+    /shared
+        /src
+        /config
+        /utils
+        /models
+        /tests
+        Cargo.toml
+    /docs
+        architecture.md
+        setup.md
+        user-guide.md
+    /scripts
+        setup.sh
+        deploy.sh
+    README.md
+```
 
 ## Getting Started
 
