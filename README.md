@@ -20,7 +20,7 @@ These incidents highlight the risks associated with storing personal data on cen
 - **Cross-Platform Compatibility:** Available for Windows, macOS, Linux, Android, and iOS.
 - **Backup and Recovery:** Secure backups and recovery options to safeguard against data loss.
 
-## System
+# Archtecture
 
 ```
 +------------------------------------------------------+
