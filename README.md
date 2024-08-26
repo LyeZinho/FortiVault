@@ -69,14 +69,3 @@ FortiVault is licensed under the [MIT License](LICENSE). See the LICENSE file fo
 ---
 
 Protect your credentials and join us in revolutionizing password management with FortiVault.
-```
-
-### Explanation:
-
-- **Introduction and Motivation:** Highlights the purpose of FortiVault and the risks of centralized data storage by referencing real-world breaches.
-- **Features:** Outlines the key features of FortiVault.
-- **Getting Started:** Provides basic steps to clone, install, and run the application.
-- **Contributing:** Encourages community involvement and provides guidance on how to contribute.
-- **License and Contact:** Includes licensing information and a contact email for support.
-
-This `README.md` serves as an introduction to FortiVault, explains the importance of decentralized security, and invites the community to participate in the development of the project.
