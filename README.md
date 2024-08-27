@@ -148,6 +148,9 @@ Network and security layers:
     README.md
 ```
 
+Palette:
+#333333, #643173, #7d5ba6, #86a59c, #89ce94
+
 ## Getting Started
 
 To get started with FortiVault, follow these steps:
