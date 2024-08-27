@@ -84,7 +84,7 @@ These incidents highlight the risks associated with storing personal data on cen
 | +---------------------------+ |  | +---------------------------+ |
 +-------------------------------+  +-------------------------------+
 ```
-
+![schema](https://raw.githubusercontent.com/LyeZinho/FortiVault/main/schema.png)
 ### Explaination
 
 Client (local application):
