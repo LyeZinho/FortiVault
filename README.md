@@ -47,11 +47,11 @@ These incidents highlight the risks associated with storing personal data on cen
 |                           |      |                           |
 | +-----------------------+ |      | +-----------------------+ |
 | |                       | |      | |                       | |
-| |   Encryption Module   | |      | |   Encryption Module   | |
-| |  (AES-256, Argon2)    | |      | |  (AES-256, Argon2)    | |
-| |                       | |      | |                       | |
-| +-----------------------+ |      | +-----------------------+ |
-|                           |      |                           |
+| |   Encryption Module   | |      | |   Encryption Module   | | (Server not encript client data because
+| |  (AES-256, Argon2)    | |      | |  (AES-256, Argon2)    | |  the data already come to server encripted 
+| |                       | |      | |                       | |  so only client know how to decript
+| +-----------------------+ |      | +-----------------------+ |  it will ensure that even if data leaks the 
+|                           |      |                           |  content will remain safe)
 | +-----------------------+ |      | +-----------------------+ |
 | |                       | |      | |                       | |
 | |   P2P Sync Manager    | |<---->| |   P2P Sync Manager    | |
@@ -106,50 +106,55 @@ Network and security layers:
    - TLS/SSL encryption: Ensures that all communications between client and server are secure.
    - API Security Layer: Protects APIs with mechanisms like JWT, OAuth2, and other security practices.
 
-```
-/fortivault
-    /client
-        /src
-        /public
-        /components
-        /services
-        /pages
-        /assets
-        /hooks
-        /utils
-        /config
-        /tests
-        next.config.js
-        package.json
-        README.md
-    /server
-        /src
-        /config
-        /routes
-        /models
-        /services
-        /tests
-        Cargo.toml
-        README.md
-    /shared
-        /src
-        /config
-        /utils
-        /models
-        /tests
-        Cargo.toml
-    /docs
-        architecture.md
-        setup.md
-        user-guide.md
-    /scripts
-        setup.sh
-        deploy.sh
-    README.md
-```
 
-Palette:
-#333333, #643173, #7d5ba6, #86a59c, #89ce94
+### Security Architecture of FortiVault Password Manager
+
+![server2client](https://raw.githubusercontent.com/LyeZinho/FortiVault/main/server2client.png)
+
+The **FortiVault Password Manager** is designed to securely store user passwords locally on the user's device, leveraging strong encryption methods and avoiding any form of cloud-based storage by default. This approach eliminates the risk of large-scale data breaches, such as the ones that have affected cloud-based password managers in the past.
+
+However, for users who wish to synchronize their data across devices or set up their private servers, FortiVault offers a flexible option. Even in this scenario, the security model is designed to maintain data integrity and privacy, adhering to a "zero trust" principle. This document outlines the security architecture and data management model employed in FortiVault.
+
+### Key Principles of the FortiVault Security Model
+
+1. **Client-Side Encryption**:  
+   All sensitive data, including passwords and user-specific information, are encrypted on the client side before being stored or transmitted. This ensures that no plaintext data is ever exposed to the server.
+
+2. **Server as a Secure Storage and Distribution Service**:  
+   The server acts merely as a storage and synchronization service. It does not perform any encryption or decryption on behalf of the clients. The server's primary role is to ensure secure access control, data integrity, and efficient synchronization between devices.
+
+3. **No Sensitive Data in Plaintext in the Database**:  
+   As SQLite databases can be easily opened by an attacker, it is essential not to store any sensitive data such as salts, IVs (Initialization Vectors), or keys in plaintext within the database. Instead, these sensitive encryption details are securely stored in an encrypted file that can only be accessed by the client.
+
+4. **Local Encrypted File for Key Management**:  
+   Each client maintains an encrypted file locally that stores all encryption-related data (e.g., salts, IVs, and private keys). This file is only decrypted when needed by the client application, adding an additional layer of security.
+
+5. **End-to-End Encryption for Data Synchronization**:  
+   When users choose to synchronize their data across devices via their private server, the client handles the encryption and decryption process. The server only stores and transmits encrypted data. This ensures that even if the server is compromised, the attacker cannot access the plaintext data.
+
+6. **Reduced Server Responsibilities**:  
+   The server's role is limited to securely storing encrypted data and managing access control. It does not need to implement any encryption or decryption routines for client data, reducing complexity and potential vulnerabilities on the server side.
+
+7. **Backup and Recovery Using Encrypted Keys**:  
+   The server, while not handling sensitive encryption, can facilitate data recovery and synchronization. Users can generate backup keys that allow them to recover their encrypted data from the server in case of device loss. However, only the client with the correct backup keys can decrypt and recover the data.
+
+### [Stay beware here some security and responsability, high refcomeded to read this.](https://github.com/LyeZinho/FortiVault/blob/main/advices/staySafe.md)
+
+---
+
+### Benefits of This Security Model
+
+- **Reduced Attack Surface on the Server**:  
+  With the server not managing any sensitive encryption keys or data in plaintext, the potential attack surface is significantly minimized. This makes it harder for attackers to exploit server-side vulnerabilities.
+
+- **End-to-End Security**:  
+  All data is encrypted on the client side, ensuring that it remains secure throughout its lifecycle—from storage to transmission to retrieval.
+
+- **Total Control for Users**:  
+  Users maintain complete control over their data and encryption keys. This aligns with the principle of user autonomy and privacy, making the application trustworthy for security-conscious users.
+
+- **Flexibility in Deployment**:  
+  Users can choose to operate FortiVault entirely offline or set up their private server for additional functionality. This flexibility does not compromise security, as the core encryption and decryption processes remain on the client side.
 
 ## Getting Started
 
