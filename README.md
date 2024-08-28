@@ -47,11 +47,11 @@ These incidents highlight the risks associated with storing personal data on cen
 |                           |      |                           |
 | +-----------------------+ |      | +-----------------------+ |
 | |                       | |      | |                       | |
-| |   Encryption Module   | |      | |   Encryption Module   | |
-| |  (AES-256, Argon2)    | |      | |  (AES-256, Argon2)    | |
-| |                       | |      | |                       | |
-| +-----------------------+ |      | +-----------------------+ |
-|                           |      |                           |
+| |   Encryption Module   | |      | |   Encryption Module   | | (Server not encript client data because
+| |  (AES-256, Argon2)    | |      | |  (AES-256, Argon2)    | |  the data already come to server encripted 
+| |                       | |      | |                       | |  so only client know how to decript
+| +-----------------------+ |      | +-----------------------+ |  it will ensure that even if data leaks the 
+|                           |      |                           |  content will remain safe)
 | +-----------------------+ |      | +-----------------------+ |
 | |                       | |      | |                       | |
 | |   P2P Sync Manager    | |<---->| |   P2P Sync Manager    | |
