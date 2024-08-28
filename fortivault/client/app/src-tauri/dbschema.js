@@ -153,4 +153,162 @@ _configurações da aplicação_
 - created_at (timestamp) - Data de criação da configuração
 - updated_at (timestamp) - Data de atualização da configuração
 
+Refined:
+
+### Tabelas Principais
+
+**1. `users` (Utilizador da aplicação)**
+
+Armazena informações sobre os usuários que utilizam a aplicação.
+
+```sql
+CREATE TABLE users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL,  -- Usar hash e não guardar senhas em texto plano
+    email TEXT NOT NULL UNIQUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+**2. `passwords` (Password do utilizador)**
+
+Armazena senhas dos usuários, com todas as informações necessárias.
+
+```sql
+CREATE TABLE passwords (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    name TEXT NOT NULL,  -- Nome para identificar a senha (por exemplo, "Conta do Gmail")
+    username TEXT,  -- Nome de utilizador associado à senha (por exemplo, "usuario@gmail.com")
+    password_hash TEXT NOT NULL,  -- Senha encriptada
+    url TEXT,  -- URL opcional associada à senha
+    tags TEXT,  -- Tags para organização, por exemplo, "trabalho, pessoal"
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+);
+```
+
+**3. `sync` (Sincronização de dados)**
+
+Registra logs de sincronização de dados entre dispositivos ou servidores.
+
+```sql
+CREATE TABLE sync (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    device_id INTEGER NOT NULL,
+    action TEXT NOT NULL,  -- Ação de sincronização: 'backup', 'sync'
+    status TEXT NOT NULL,  -- Status da sincronização: 'success', 'error'
+    message TEXT,  -- Mensagem descritiva sobre o status ou erro
+    data BLOB,  -- Dados encriptados relacionados à sincronização (JSON ou outra estrutura)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+    FOREIGN KEY (device_id) REFERENCES devices (id) ON DELETE CASCADE
+);
+```
+
+**4. `devices` (Dispositivo do usuário)**
+
+Registra os dispositivos utilizados pelo usuário para sincronizar dados.
+
+```sql
+CREATE TABLE devices (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    name TEXT NOT NULL,  -- Nome do dispositivo
+    os TEXT,  -- Sistema operacional do dispositivo
+    version TEXT,  -- Versão do sistema operacional
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+);
+```
+
+**5. `servers` (Servidor do usuário)**
+
+Registra servidores configurados pelo usuário para armazenamento seguro e sincronização de dados.
+
+```sql
+CREATE TABLE servers (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    name TEXT NOT NULL,  -- Nome do servidor configurado
+    ip TEXT NOT NULL,  -- IP do servidor
+    port INTEGER NOT NULL,  -- Porta do servidor
+    root TEXT,  -- Diretório root do servidor
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+);
+```
+
+**6. `logs` (Log de atividades)**
+
+Registra atividades e logs de auditoria na aplicação para segurança e monitoramento.
+
+```sql
+CREATE TABLE logs (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    action TEXT NOT NULL,  -- Ação realizada (por exemplo, 'login', 'backup', 'sync')
+    status TEXT NOT NULL,  -- Status da ação (por exemplo, 'success', 'failed')
+    message TEXT,  -- Mensagem detalhada do log
+    data BLOB,  -- Dados adicionais relacionados à ação (encriptados)
+    ip TEXT,  -- IP do dispositivo (pode ser NULL)
+    device_id INTEGER,  -- Identificador do dispositivo (pode ser NULL)
+    server_id INTEGER,  -- Identificador do servidor (pode ser NULL)
+    password_id INTEGER,  -- Identificador da senha (pode ser NULL)
+    sync_id INTEGER,  -- Identificador da sincronização (pode ser NULL)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+    FOREIGN KEY (device_id) REFERENCES devices (id),
+    FOREIGN KEY (server_id) REFERENCES servers (id),
+    FOREIGN KEY (password_id) REFERENCES passwords (id),
+    FOREIGN KEY (sync_id) REFERENCES sync (id)
+);
+```
+
+**7. `configurations` (Configuração da aplicação)**
+
+Armazena configurações de aplicação e usuário, separando configurações de usuário, servidor e dispositivo para flexibilidade.
+
+```sql
+CREATE TABLE configurations (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
+    device_id INTEGER,
+    server_id INTEGER,
+    name TEXT NOT NULL,  -- Nome da configuração
+    value TEXT NOT NULL,  -- Valor da configuração
+    scope TEXT NOT NULL,  -- Escopo da configuração ('user', 'server', 'device', 'app')
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+    FOREIGN KEY (device_id) REFERENCES devices (id),
+    FOREIGN KEY (server_id) REFERENCES servers (id)
+);
+```
+
+### Sugestões e Melhorias
+
+1. **Segurança de Senhas**: Garanta que todas as senhas sejam armazenadas usando hashing seguro (por exemplo, `bcrypt`, `argon2`).
+
+2. **Normalização de Tabelas**: As tabelas estão bem normalizadas, mas atenção para o uso de tipos de dados eficientes e evitar a redundância desnecessária.
+
+3. **Logging e Auditoria**: Adicione logs de auditoria detalhados para ações críticas, como login, logout, alterações de senha e configurações, para melhorar a segurança.
+
+4. **Criptografia de Dados Sensíveis**: Certifique-se de que dados como `data` em `logs` e `sync` sejam armazenados de forma encriptada.
+
+5. **Índices para Desempenho**: Adicione índices em colunas frequentemente usadas para buscas ou filtros, como `username` em `users`, `user_id` em `passwords`, etc.
+
+6. **Sincronização Offline e Backup**: Considere adicionar uma tabela para controle de backups automáticos locais para garantir redundância de dados.
+
+7. **Autenticação de Dispositivos**: Adicione uma coluna `auth_token` ou algo semelhante em `devices` para autenticação segura de dispositivos.
+
+Essas melhorias ajudarão a garantir que o FortiVault seja seguro, escalável e fácil de usar. Se precisar de mais ajustes ou quiser detalhar mais algum ponto, estou à disposição!
 */
