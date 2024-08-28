@@ -1,5 +1,5 @@
-/*
-Eschema para a base de dados
+
+# Eschema para a base de dados
 FortiVault Password Manager
 
 Introdução.
