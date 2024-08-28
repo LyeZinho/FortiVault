@@ -61,15 +61,27 @@ Todas as configurações do servidor podem ser armazenadas em uma única tabela.
 ```sql
 CREATE TABLE server_configurations (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    config_key TEXT NOT NULL UNIQUE,  -- Chave da configuração
-    config_value TEXT NOT NULL,  -- Valor da configuração
+    ip TEXT NOT NULL,                  -- IP disponibilizado para o servidor
+    port INTEGER NOT NULL,             -- Porta disponibilizada para o servidor
+    max_connections INTEGER NOT NULL,  -- Máximo de conexões simultâneas
+    --encryption_key TEXT,               -- Chave de criptografia (não armazenada diretamente, mencionada apenas para referência)
+    backup_enabled BOOLEAN DEFAULT FALSE,  -- Indica se o backup está ativado
+    backup_location TEXT,              -- Localização do backup (se aplicável)
+    log_level TEXT DEFAULT 'INFO',     -- Nível de log (ex: DEBUG, INFO, WARN, ERROR)
+    maintenance_mode BOOLEAN DEFAULT FALSE, -- Indica se o servidor está em modo de manutenção
+    allowed_ips TEXT,                  -- Lista de IPs permitidos para conexão (se necessário)
+    rate_limit INTEGER DEFAULT 100,    -- Limite de requisições por minuto para prevenir abusos
+    timeout INTEGER DEFAULT 300,       -- Timeout para conexões em segundos
+    authentication_method TEXT DEFAULT 'TOKEN', -- Método de autenticação (ex: TOKEN, OAUTH)
+    session_timeout INTEGER DEFAULT 3600, -- Tempo de expiração da sessão em segundos
+    max_login_attempts INTEGER DEFAULT 5, -- Máximo de tentativas de login antes de bloquear
+    password_policy TEXT,              -- Política de senhas (ex: mínimo de caracteres, complexidade)
+    enable_https BOOLEAN DEFAULT TRUE, -- Se o servidor deve forçar HTTPS
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-```
 
-- **`config_key`**: Chave única para identificar a configuração.
-- **`config_value`**: Valor associado à chave. Pode ser texto, número ou outro formato que você escolher para armazenar configurações.
+```
 
 ### 3. Gerenciamento de Dados Criptografados e Seguros
 
@@ -95,7 +107,3 @@ Vamos assumir que você tenha um arquivo de configuração criptografado. Quando
 - **Chaves de criptografia**
 - **Tokens de acesso**
 - **Detalhes do servidor e chaves de backup**
-
-### Conclusão
-
-Essa estrutura de banco de dados para o servidor garante que você possa gerenciar usuários, permissões e configurações de maneira eficiente enquanto mantém a segurança dos dados sensíveis fora da base de dados. A abordagem de manter as informações criptográficas em arquivos separados e criptografados adiciona uma camada adicional de segurança e simplifica a administração da base de dados.
