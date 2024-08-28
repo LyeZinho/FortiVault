@@ -138,7 +138,9 @@ However, for users who wish to synchronize their data across devices or set up t
 7. **Backup and Recovery Using Encrypted Keys**:  
    The server, while not handling sensitive encryption, can facilitate data recovery and synchronization. Users can generate backup keys that allow them to recover their encrypted data from the server in case of device loss. However, only the client with the correct backup keys can decrypt and recover the data.
 
-## [Stay beware here some security and responsability, high refcomeded to read this.](https://github.com/LyeZinho/FortiVault/blob/main/advices/staySafe.md)
+### [Stay beware here some security and responsability, high refcomeded to read this.](https://github.com/LyeZinho/FortiVault/blob/main/advices/staySafe.md)
+
+---
 
 ### Benefits of This Security Model
 
