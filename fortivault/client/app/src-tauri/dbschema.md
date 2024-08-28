@@ -236,13 +236,14 @@ CREATE TABLE devices (
 Registra servidores configurados pelo usuário para armazenamento seguro e sincronização de dados.
 
 ```sql
-CREATE TABLE servers (
+CREATE TABLE client_server_settings (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER NOT NULL,
-    name TEXT NOT NULL,  -- Nome do servidor configurado
-    ip TEXT NOT NULL,  -- IP do servidor
-    port INTEGER NOT NULL,  -- Porta do servidor
-    root TEXT,  -- Diretório root do servidor
+    user_id INTEGER NOT NULL,  -- Usuário ao qual as configurações se aplicam
+    server_ip TEXT NOT NULL,  -- IP do servidor para conexão
+    server_port INTEGER NOT NULL,  -- Porta do servidor para conexão
+    auto_sync BOOLEAN NOT NULL DEFAULT 0,  -- Sincronização automática (1 - Ativado, 0 - Desativado)
+    preferred_encryption TEXT NOT NULL DEFAULT 'AES-256',  -- Protocolo de criptografia preferido
+    theme TEXT NOT NULL DEFAULT 'light',  -- Tema da aplicação (light, dark)
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
