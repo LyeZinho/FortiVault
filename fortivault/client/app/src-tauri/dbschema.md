@@ -165,8 +165,11 @@ Armazena informações sobre os usuários que utilizam a aplicação.
 CREATE TABLE users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT NOT NULL UNIQUE,
-    password_hash TEXT NOT NULL,  -- Usar hash e não guardar senhas em texto plano
-    email TEXT NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL,  -- Hash seguro da senha do usuário
+    recovery_data BLOB,  -- Dados de recuperação de conta encriptados (opcional)
+    two_factor_key TEXT,  -- Chave secreta para 2FA (opcional)
+    biometric_enabled BOOLEAN DEFAULT 0,  -- Indica se a biometria está habilitada
+    backup_code_hash TEXT,  -- Hash dos códigos de backup para recuperação (opcional)
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
