@@ -153,4 +153,11 @@ _configurações da aplicação_
 - created_at (timestamp) - Data de criação da configuração
 - updated_at (timestamp) - Data de atualização da configuração
 
+
+- Token (Token de acesso)
+o Token é o token de acesso da aplicação, ele é usado para autenticação na aplicação, e tambem para
+acesso aos dados, e tambem para sincronização de dados, e tambem para backup dos dados.
+dados do Token:
+- id (int) - Identificador do token
+- user_id (int) - Identificador do utilizador
 */
