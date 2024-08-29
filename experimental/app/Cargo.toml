@@ -1,0 +1,9 @@
+[package]
+name = "app"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+sea-orm = { version = "0.12", features = ["runtime-tokio-native-tls", "sqlx-sqlite"] }
+sea-query = { version = "0.32.0-rc.1" }
+tokio = { version = "1", features = ["full"] }

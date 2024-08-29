@@ -1,0 +1,13 @@
+C:\Users\pkgam\Desktop\test\app\target\debug\deps\libsha2-4aeaa1cd78177ffe.rmeta: C:\Users\pkgam\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha2-0.10.8\src\lib.rs C:\Users\pkgam\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha2-0.10.8\src\core_api.rs C:\Users\pkgam\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha2-0.10.8\src\sha256.rs C:\Users\pkgam\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha2-0.10.8\src\sha512.rs C:\Users\pkgam\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha2-0.10.8\src\consts.rs C:\Users\pkgam\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha2-0.10.8\src\sha256\soft.rs C:\Users\pkgam\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha2-0.10.8\src\sha256\x86.rs C:\Users\pkgam\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha2-0.10.8\src\sha512\soft.rs C:\Users\pkgam\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha2-0.10.8\src\sha512\x86.rs
+
+C:\Users\pkgam\Desktop\test\app\target\debug\deps\sha2-4aeaa1cd78177ffe.d: C:\Users\pkgam\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha2-0.10.8\src\lib.rs C:\Users\pkgam\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha2-0.10.8\src\core_api.rs C:\Users\pkgam\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha2-0.10.8\src\sha256.rs C:\Users\pkgam\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha2-0.10.8\src\sha512.rs C:\Users\pkgam\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha2-0.10.8\src\consts.rs C:\Users\pkgam\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha2-0.10.8\src\sha256\soft.rs C:\Users\pkgam\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha2-0.10.8\src\sha256\x86.rs C:\Users\pkgam\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha2-0.10.8\src\sha512\soft.rs C:\Users\pkgam\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha2-0.10.8\src\sha512\x86.rs
+
+C:\Users\pkgam\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha2-0.10.8\src\lib.rs:
+C:\Users\pkgam\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha2-0.10.8\src\core_api.rs:
+C:\Users\pkgam\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha2-0.10.8\src\sha256.rs:
+C:\Users\pkgam\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha2-0.10.8\src\sha512.rs:
+C:\Users\pkgam\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha2-0.10.8\src\consts.rs:
+C:\Users\pkgam\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha2-0.10.8\src\sha256\soft.rs:
+C:\Users\pkgam\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha2-0.10.8\src\sha256\x86.rs:
+C:\Users\pkgam\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha2-0.10.8\src\sha512\soft.rs:
+C:\Users\pkgam\.cargo\registry\src\index.crates.io-6f17d22bba15001f\sha2-0.10.8\src\sha512\x86.rs:
