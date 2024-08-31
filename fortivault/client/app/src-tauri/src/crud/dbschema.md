@@ -315,4 +315,3 @@ CREATE TABLE configurations (
 7. **Autenticação de Dispositivos**: Adicione uma coluna `auth_token` ou algo semelhante em `devices` para autenticação segura de dispositivos.
 
 Essas melhorias ajudarão a garantir que o FortiVault seja seguro, escalável e fácil de usar. Se precisar de mais ajustes ou quiser detalhar mais algum ponto, estou à disposição!
-*/

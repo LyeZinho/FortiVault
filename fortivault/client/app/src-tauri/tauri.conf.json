@@ -7,7 +7,7 @@
     "distDir": "../out"
   },
   "package": {
-    "productName": "FortiVault",
+    "productName": "app",
     "version": "0.1.0"
   },
   "tauri": {
