@@ -45,13 +45,13 @@ These incidents highlight the risks associated with storing personal data on cen
 | |                       | |      | |                       | |
 | +-----------------------+ |      | +-----------------------+ |
 |                           |      |                           |
-| +-----------------------+ |      | +-----------------------+ |
-| |                       | |      | |                       | |
-| |   Encryption Module   | |      | |   Encryption Module   | | (Server not encript client data because
-| |  (AES-256, Argon2)    | |      | |  (AES-256, Argon2)    | |  the data already come to server encripted 
-| |                       | |      | |                       | |  so only client know how to decript
-| +-----------------------+ |      | +-----------------------+ |  it will ensure that even if data leaks the 
-|                           |      |                           |  content will remain safe)
+| +-----------------------+ |      | +-----------------------+ | (Server not encript client data because
+| |                       | |      | |                       | | the data already come to server encripted
+| |   Encryption Module   | |      | |   Encryption Module   | | so only client know how to decript
+| |  (AES-256, Argon2)    | |      | |  (AES-256, Argon2)    | | it will ensure that even if data leaks the
+| |                       | |      | |                       | | content will remain safe)
+| +-----------------------+ |      | +-----------------------+ |   
+|                           |      |                           |  
 | +-----------------------+ |      | +-----------------------+ |
 | |                       | |      | |                       | |
 | |   P2P Sync Manager    | |<---->| |   P2P Sync Manager    | |
