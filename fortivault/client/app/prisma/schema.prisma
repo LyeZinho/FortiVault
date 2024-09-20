@@ -1,0 +1,102 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Create a new connection informnaion between the frontend and the 
+model Connection {
+  id            Int       @id @default(autoincrement())
+  acessId      String     @unique @default(cuid())
+  acessKey    String @unique @default(cuid())
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @default(now())
+}
+
+model User {
+  id               Int       @id @default(autoincrement())
+  username         String    @unique
+  passwordHash     String
+  recoveryData     Bytes?
+  twoFactorKey     String?
+  biometricEnabled Boolean  @default(false)
+  backupCodeHash    String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @default(now())
+}
+
+model Password {
+  id            Int       @id @default(autoincrement())
+  userId         Int
+  name          String
+  username      String?
+  passwordHash  String
+  url           String?
+  tags          String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @default(now())
+}
+
+model Sync {
+  id            Int       @id @default(autoincrement())
+  userId         Int
+  deviceId       Int
+  action        String
+  status        String
+  message       String?
+  data          Bytes?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @default(now())
+}
+
+model Device {
+  id            Int       @id @default(autoincrement())
+  userId         Int
+  name          String
+  os            String
+  version       String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @default(now())
+}
+
+model Server {
+  id            Int       @id @default(autoincrement())
+  userId         Int
+  name          String
+  ip            String
+  port          Int
+  root          String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @default(now())
+}
+
+model Log {
+  id            Int       @id @default(autoincrement())
+  userId         Int
+  action        String
+  status        String
+  message       String?
+  data          Bytes?
+  ip            String?
+  deviceId       Int?
+  serverId       Int?
+  passwordId     Int?
+  syncId        Int?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @default(now())
+}
+
+model Configuration {
+  id            Int       @id @default(autoincrement())
+  userId         Int?
+  deviceId       Int?
+  serverId       Int?
+  name          String
+  value         String
+  scope         String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @default(now())
+}
