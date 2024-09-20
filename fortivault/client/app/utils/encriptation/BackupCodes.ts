@@ -3,8 +3,8 @@ import crypto from 'crypto';
 class BackupCodes {
     private initializers: string;
 
-    constructor() {
-        this.initializers = this.generateInitializers();
+    constructor(initializerimput?: string) {
+        this.initializers = this.generateInitializers() == null ? this.generateInitializers() : initializerimput as string;
     }
 
     generateInitializers(): string {
@@ -15,7 +15,6 @@ class BackupCodes {
         }
         return result;
     }
-
 
     generateInitialGroups(): string[] {
         const groups = [];
