@@ -4,13 +4,21 @@ class BackupCodes {
     private initializers: string;
 
     constructor(initializerimput?: string) {
-        this.initializers = this.generateInitializers() == null ? this.generateInitializers() : initializerimput as string;
+        this.initializers = initializerimput || "";
+    }
+
+    setupInitializers(){
+        this.initializers = this.generateInitializers();
+    }
+
+    getInitializers(){
+        return this.initializers;
     }
 
     generateInitializers(): string {
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+[{]}|;:,.<>?/~`';
         let result = '';
-        for (let i = 0; i < 16; i++) {
+        for (let i = 0; i < 18; i++) {
             result += characters.charAt(Math.floor(Math.random() * characters.length));
         }
         return result;
