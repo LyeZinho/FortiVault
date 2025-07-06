@@ -5,12 +5,14 @@ import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/toaster"
 import { AuthProvider } from "@/hooks/use-auth"
+import { AuthGuard } from "@/components/auth/auth-guard"
+import { AppSidebar } from "@/components/app-sidebar"
 
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: "FortiVault - Decentralized Password Manager",
-  description: "Secure, offline-first password manager with end-to-end encryption",
+  description: "Secure, offline-first password manager with P2P sync",
     generator: 'v0.dev'
 }
 
@@ -24,9 +26,14 @@ export default function RootLayout({
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
           <AuthProvider>
-            {children}
-            <Toaster />
+            <AuthGuard>
+              <div className="flex min-h-screen">
+                <AppSidebar />
+                <main className="flex-1">{children}</main>
+              </div>
+            </AuthGuard>
           </AuthProvider>
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

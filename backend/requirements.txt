@@ -1,10 +1,12 @@
 fastapi==0.104.1
 uvicorn[standard]==0.24.0
-aiosqlite==0.19.0
-cryptography==41.0.7
+pydantic==2.4.2
+cryptography==42.0.8
 argon2-cffi==23.1.0
-PyJWT==2.8.0
 python-multipart==0.0.6
-pydantic==2.5.0
-pydantic-settings==2.1.0
+aiofiles==23.2.0
+python-jose[cryptography]==3.3.0
 passlib[bcrypt]==1.7.4
+pyotp==2.9.0
+qrcode[pil]==7.4.2
+python-dotenv==1.0.0

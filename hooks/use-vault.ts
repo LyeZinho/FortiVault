@@ -1,229 +1,238 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { apiClient, type Password, type Folder, type VaultStats } from "@/lib/api"
+import { apiClient } from "@/lib/api-client"
 import { useToast } from "@/hooks/use-toast"
 
+interface PasswordEntry {
+  id: string
+  title: string
+  username: string
+  password: string
+  url?: string
+  notes?: string
+  folder: string
+  tags: string[]
+  strength: "weak" | "fair" | "good" | "strong"
+  is_favorite: boolean
+  created_at: string
+  updated_at: string
+}
+
+interface VaultStats {
+  total_passwords: number
+  weak_passwords: number
+  duplicate_passwords: number
+  strong_passwords: number
+  last_backup?: string
+  security_score: number
+}
+
+interface Folder {
+  id: string
+  name: string
+  color: string
+  icon?: string
+  password_count: number
+  created_at: string
+}
+
 export function useVault() {
-  const [passwords, setPasswords] = useState<Password[]>([])
+  const [passwords, setPasswords] = useState<PasswordEntry[]>([])
   const [folders, setFolders] = useState<Folder[]>([])
   const [stats, setStats] = useState<VaultStats | null>(null)
-  const [searchTerm, setSearchTerm] = useState("")
-  const [selectedFolder, setSelectedFolder] = useState<string | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const { toast } = useToast()
 
-  // Load initial data
-  const loadVaultData = async () => {
+  const loadPasswords = async () => {
     try {
-      setIsLoading(true)
+      setLoading(true)
+      const response = await apiClient.getPasswords()
 
-      // Load passwords, folders, and stats in parallel
-      const [passwordsResponse, foldersResponse, statsResponse] = await Promise.all([
-        apiClient.getPasswords(searchTerm || undefined, selectedFolder || undefined),
-        apiClient.getFolders(),
-        apiClient.getVaultStats(),
-      ])
+      if (response.error) {
+        setError(response.error)
+        toast({
+          title: "Failed to load passwords",
+          description: response.error,
+          variant: "destructive",
+        })
+        return
+      }
 
-      setPasswords(passwordsResponse.passwords)
-      setFolders(foldersResponse.folders)
-      setStats(statsResponse)
-    } catch (error: any) {
-      console.error("Failed to load vault data:", error)
+      setPasswords(response.data || [])
+      setError(null)
+    } catch (err) {
+      const message = "Failed to connect to backend"
+      setError(message)
       toast({
-        title: "Failed to load vault data",
-        description: error.message || "Please try again",
+        title: "Connection error",
+        description: message,
         variant: "destructive",
       })
     } finally {
-      setIsLoading(false)
+      setLoading(false)
     }
   }
 
-  // Search passwords
-  const searchPasswords = async (query: string) => {
+  const loadFolders = async () => {
     try {
-      setIsLoading(true)
-      const response = await apiClient.getPasswords(query || undefined, selectedFolder || undefined)
-      setPasswords(response.passwords)
-    } catch (error: any) {
-      toast({
-        title: "Search failed",
-        description: error.message,
-        variant: "destructive",
-      })
-    } finally {
-      setIsLoading(false)
+      const response = await apiClient.getFolders()
+
+      if (response.error) {
+        console.error("Failed to load folders:", response.error)
+        return
+      }
+
+      setFolders(response.data || [])
+    } catch (err) {
+      console.error("Folders loading error:", err)
     }
   }
 
-  // Filter by folder
-  const filterByFolder = async (folderId: string | null) => {
+  const loadStats = async () => {
     try {
-      setIsLoading(true)
-      setSelectedFolder(folderId)
-      const response = await apiClient.getPasswords(searchTerm || undefined, folderId || undefined)
-      setPasswords(response.passwords)
-    } catch (error: any) {
-      toast({
-        title: "Filter failed",
-        description: error.message,
-        variant: "destructive",
-      })
-    } finally {
-      setIsLoading(false)
+      const response = await apiClient.getVaultStats()
+
+      if (response.error) {
+        console.error("Failed to load stats:", response.error)
+        return
+      }
+
+      setStats(response.data || null)
+    } catch (err) {
+      console.error("Stats loading error:", err)
     }
   }
 
-  // Add password
-  const addPassword = async (passwordData: Omit<Password, "id" | "created_at" | "updated_at" | "strength">) => {
+  const addPassword = async (passwordData: Partial<PasswordEntry>) => {
     try {
-      const response = await apiClient.createPassword(passwordData)
+      const response = await apiClient.addPassword(passwordData as any)
+
+      if (response.error) {
+        throw new Error(response.error)
+      }
 
       toast({
         title: "Password added",
-        description: `${passwordData.title} has been saved securely`,
+        description: "New password has been saved to your vault",
       })
 
-      // Reload data to get updated list
-      await loadVaultData()
-      return response.id
-    } catch (error: any) {
+      await loadPasswords()
+      await loadStats()
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Failed to add password"
       toast({
-        title: "Failed to add password",
-        description: error.message,
+        title: "Error",
+        description: message,
         variant: "destructive",
       })
-      throw error
+      throw err
     }
   }
 
-  // Update password
-  const updatePassword = async (id: number, passwordData: Partial<Password>) => {
+  const updatePassword = async (id: string, passwordData: Partial<PasswordEntry>) => {
     try {
-      await apiClient.updatePassword(id, passwordData)
+      const response = await apiClient.updatePassword(id, passwordData)
+
+      if (response.error) {
+        throw new Error(response.error)
+      }
 
       toast({
         title: "Password updated",
-        description: "Changes have been saved securely",
+        description: "Your password has been updated successfully",
       })
 
-      // Reload data to get updated list
-      await loadVaultData()
-    } catch (error: any) {
+      await loadPasswords()
+      await loadStats()
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Failed to update password"
       toast({
-        title: "Failed to update password",
-        description: error.message,
+        title: "Error",
+        description: message,
         variant: "destructive",
       })
-      throw error
+      throw err
     }
   }
 
-  // Delete password
-  const deletePassword = async (id: number) => {
+  const deletePassword = async (id: string) => {
     try {
-      await apiClient.deletePassword(id)
+      const response = await apiClient.deletePassword(id)
+
+      if (response.error) {
+        throw new Error(response.error)
+      }
 
       toast({
         title: "Password deleted",
         description: "Password has been removed from your vault",
       })
 
-      // Remove from local state immediately
-      setPasswords((prev) => prev.filter((p) => p.id !== id))
-
-      // Reload stats
-      const statsResponse = await apiClient.getVaultStats()
-      setStats(statsResponse)
-    } catch (error: any) {
+      await loadPasswords()
+      await loadStats()
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Failed to delete password"
       toast({
-        title: "Failed to delete password",
-        description: error.message,
+        title: "Error",
+        description: message,
         variant: "destructive",
       })
-      throw error
+      throw err
     }
   }
 
-  // Add folder
-  const addFolder = async (folderData: { id: string; name: string; icon?: string }) => {
+  const createFolder = async (name: string, color: string, icon?: string) => {
     try {
-      await apiClient.createFolder(folderData)
+      const response = await apiClient.createFolder(name, color, icon)
+
+      if (response.error) {
+        throw new Error(response.error)
+      }
 
       toast({
         title: "Folder created",
-        description: `${folderData.name} folder has been created`,
+        description: `"${name}" folder has been created`,
       })
 
-      // Reload folders
-      const foldersResponse = await apiClient.getFolders()
-      setFolders(foldersResponse.folders)
-    } catch (error: any) {
+      await loadFolders()
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Failed to create folder"
       toast({
-        title: "Failed to create folder",
-        description: error.message,
+        title: "Error",
+        description: message,
         variant: "destructive",
       })
-      throw error
+      throw err
     }
   }
 
-  // Generate password
-  const generatePassword = async (options: {
-    length: number
-    include_uppercase: boolean
-    include_lowercase: boolean
-    include_numbers: boolean
-    include_symbols: boolean
-  }) => {
-    try {
-      const response = await apiClient.generatePassword(options)
-      return response
-    } catch (error: any) {
-      toast({
-        title: "Failed to generate password",
-        description: error.message,
-        variant: "destructive",
-      })
-      throw error
-    }
+  const generatePassword = async (length = 16, includeSymbols = true) => {
+    return apiClient.generatePassword(length, includeSymbols)
   }
 
-  // Effects
   useEffect(() => {
-    loadVaultData()
+    loadPasswords()
+    loadFolders()
+    loadStats()
   }, [])
 
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      if (searchTerm !== "") {
-        searchPasswords(searchTerm)
-      } else {
-        loadVaultData()
-      }
-    }, 300) // Debounce search
-
-    return () => clearTimeout(timeoutId)
-  }, [searchTerm])
-
   return {
-    // State
     passwords,
     folders,
     stats,
-    searchTerm,
-    selectedFolder,
-    isLoading,
-
-    // Actions
-    setSearchTerm,
-    setSelectedFolder: filterByFolder,
+    loading,
+    error,
     addPassword,
     updatePassword,
     deletePassword,
-    addFolder,
+    createFolder,
     generatePassword,
-    loadVaultData,
+    reload: () => {
+      loadPasswords()
+      loadFolders()
+      loadStats()
+    },
   }
 }
