@@ -12,8 +12,7 @@ const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: "FortiVault - Decentralized Password Manager",
-  description: "Secure, offline-first password manager with P2P sync",
-    generator: 'v0.dev'
+  description: "Secure, offline-first password manager with P2P sync"
 }
 
 export default function RootLayout({
