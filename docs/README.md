@@ -20,9 +20,9 @@ FortiVault é um gerenciador de senhas offline-first com sincronização P2P, au
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   Frontend      │    │    Backend      │    │   Database      │
-│   (Next.js 15) │◄──►│   (FastAPI)     │◄──►│   (SQLite)      │
+│   (Next.js 15)  │◄──►│   (FastAPI)     │◄──►│   (SQLite)      │
 │                 │    │                 │    │                 │
-│ • React 19      │    │ • Python 3.11+ │    │ • Encrypted     │
+│ • React 19      │    │ • Python 3.11+  │    │ • Encrypted     │
 │ • TypeScript    │    │ • Cryptography  │    │ • Local Storage │
 │ • Tailwind CSS  │    │ • JWT + 2FA     │    │ • Backups       │
 │ • Shadcn/ui     │    │ • Argon2 Hash   │    │                 │
