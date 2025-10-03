@@ -28,3 +28,17 @@ next-env.d.ts
 
 # Python virtual enviroment / venv files
 .venv/
+
+# Docker volumes and data
+nginx/logs/
+nginx/ssl/*.pem
+nginx/ssl/*.key
+
+# Local database files (use volumes instead)
+backend/database/vault.db
+backend/backups/*.db
+backend/backups/*.fvault
+
+# Logs
+*.log
+logs/

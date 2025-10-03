@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: fortivault-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_PATH=/app/data/vault.db
+      - SECRET_KEY=${SECRET_KEY:-your-super-secret-key-min-32-characters-long}
+      - DEBUG=false
+      - ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000,http://frontend:3000
+      - HOST=0.0.0.0
+      - PORT=8000
+    volumes:
+      - vault_data:/app/data
+      - backup_data:/app/backups
+      - ./backend/logs:/app/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - fortivault-network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+      args:
+        - NEXT_PUBLIC_API_URL=http://backend:8000
+    container_name: fortivault-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+      - NODE_ENV=production
+      - HOSTNAME=0.0.0.0
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - fortivault-network
+
+  nginx:
+    image: nginx:alpine
+    container_name: fortivault-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - ./nginx/logs:/var/log/nginx
+    depends_on:
+      - frontend
+      - backend
+    restart: unless-stopped
+    networks:
+      - fortivault-network
+
+volumes:
+  vault_data:
+    driver: local
+  backup_data:
+    driver: local
+
+networks:
+  fortivault-network:
+    driver: bridge

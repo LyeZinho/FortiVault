@@ -630,12 +630,54 @@ async def get_backups(current_user: Dict = Depends(get_current_user)):
 # Health check endpoint
 @app.get("/health")
 async def health_check():
-    """Health check endpoint"""
-    return {
-        "status": "healthy",
-        "timestamp": datetime.now().isoformat(),
-        "version": "2.0.0"
-    }
+    """Health check endpoint with database connectivity test"""
+    try:
+        # Test database connectivity
+        db_status = "healthy"
+        db_info = {}
+        try:
+            conn = sqlite3.connect(db.db_path)
+            cursor = conn.cursor()
+            cursor.execute("SELECT COUNT(*) FROM users")
+            user_count = cursor.fetchone()[0]
+            cursor.execute("SELECT COUNT(*) FROM passwords")
+            password_count = cursor.fetchone()[0]
+            conn.close()
+            
+            db_info = {
+                "status": "connected",
+                "users": user_count,
+                "passwords": password_count,
+                "path": str(db.db_path)
+            }
+        except Exception as e:
+            db_status = "unhealthy"
+            db_info = {
+                "status": "error",
+                "error": str(e)
+            }
+        
+        return {
+            "status": "healthy" if db_status == "healthy" else "degraded",
+            "timestamp": datetime.now().isoformat(),
+            "version": "2.0.0",
+            "service": "fortivault-backend",
+            "database": db_info,
+            "features": [
+                "authentication",
+                "2fa_totp",
+                "encryption_aes256",
+                "backup_export",
+                "p2p_sync"
+            ]
+        }
+    except Exception as e:
+        return {
+            "status": "unhealthy",
+            "timestamp": datetime.now().isoformat(),
+            "error": str(e),
+            "service": "fortivault-backend"
+        }
 
 if __name__ == "__main__":
     print("🛡️  Starting FortiVault Backend v2.0...")

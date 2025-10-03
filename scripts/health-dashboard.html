@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FortiVault - Health Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 30px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .header h1 {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+        
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .service-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            background: #fafafa;
+            transition: all 0.3s ease;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        
+        .service-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .service-name {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-left: 10px;
+        }
+        
+        .status-healthy { background-color: #4CAF50; }
+        .status-degraded { background-color: #FF9800; }
+        .status-unhealthy { background-color: #F44336; }
+        .status-unknown { background-color: #9E9E9E; }
+        
+        .service-details {
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .service-details div {
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .refresh-controls {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 0 5px;
+            transition: background 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: #5a6fd8;
+        }
+        
+        .btn.auto-refresh {
+            background: #4CAF50;
+        }
+        
+        .btn.auto-refresh:hover {
+            background: #45a049;
+        }
+        
+        .timestamp {
+            text-align: center;
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .loading {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .loading {
+            animation: pulse 1.5s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛡️ FortiVault</h1>
+            <p>Health Dashboard & Service Monitor</p>
+        </div>
+        
+        <div class="refresh-controls">
+            <button class="btn" onclick="refreshAll()">🔄 Refresh Now</button>
+            <button class="btn auto-refresh" id="autoRefreshBtn" onclick="toggleAutoRefresh()">⏰ Auto Refresh: OFF</button>
+        </div>
+        
+        <div class="services-grid" id="servicesGrid">
+            <div class="loading">Loading services...</div>
+        </div>
+        
+        <div class="timestamp" id="lastUpdate">
+            Last updated: Never
+        </div>
+    </div>
+
+    <script>
+        let autoRefreshInterval = null;
+        let isAutoRefresh = false;
+        
+        const services = [
+            {
+                name: 'Frontend (Next.js)',
+                url: 'http://localhost:3000/api/health',
+                description: 'React frontend with Next.js App Router'
+            },
+            {
+                name: 'Backend (FastAPI)',
+                url: 'http://localhost:8000/health',
+                description: 'Python API with authentication and encryption'
+            },
+            {
+                name: 'Nginx Proxy',
+                url: 'http://localhost:80/api/health',
+                description: 'Reverse proxy and load balancer'
+            }
+        ];
+        
+        async function checkService(service) {
+            try {
+                const response = await fetch(service.url, {
+                    method: 'GET',
+                    cache: 'no-store'
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    return {
+                        ...service,
+                        status: data.status || 'healthy',
+                        data: data,
+                        error: null,
+                        responseTime: Date.now()
+                    };
+                } else {
+                    return {
+                        ...service,
+                        status: 'unhealthy',
+                        data: null,
+                        error: `HTTP ${response.status}`,
+                        responseTime: null
+                    };
+                }
+            } catch (error) {
+                return {
+                    ...service,
+                    status: 'unreachable',
+                    data: null,
+                    error: error.message,
+                    responseTime: null
+                };
+            }
+        }
+        
+        function getStatusClass(status) {
+            switch (status) {
+                case 'healthy': return 'status-healthy';
+                case 'degraded': return 'status-degraded';
+                case 'unhealthy': return 'status-unhealthy';
+                case 'unreachable': return 'status-unhealthy';
+                default: return 'status-unknown';
+            }
+        }
+        
+        function formatServiceCard(service) {
+            const statusText = service.status === 'unreachable' ? 'Unreachable' : 
+                             service.status.charAt(0).toUpperCase() + service.status.slice(1);
+            
+            let details = '';
+            if (service.data) {
+                details = `
+                    <div><strong>Version:</strong> <span>${service.data.version || 'Unknown'}</span></div>
+                    <div><strong>Service:</strong> <span>${service.data.service || 'Unknown'}</span></div>
+                    <div><strong>Timestamp:</strong> <span>${service.data.timestamp ? new Date(service.data.timestamp).toLocaleTimeString() : 'Unknown'}</span></div>
+                `;
+                
+                if (service.data.backend) {
+                    details += `<div><strong>Backend:</strong> <span>${service.data.backend.status}</span></div>`;
+                }
+                
+                if (service.data.database) {
+                    details += `<div><strong>Database:</strong> <span>${service.data.database.status}</span></div>`;
+                    if (service.data.database.users !== undefined) {
+                        details += `<div><strong>Users:</strong> <span>${service.data.database.users}</span></div>`;
+                    }
+                    if (service.data.database.passwords !== undefined) {
+                        details += `<div><strong>Passwords:</strong> <span>${service.data.database.passwords}</span></div>`;
+                    }
+                }
+            } else if (service.error) {
+                details = `<div><strong>Error:</strong> <span style="color: #F44336;">${service.error}</span></div>`;
+            }
+            
+            return `
+                <div class="service-card">
+                    <div class="service-header">
+                        <div class="service-name">${service.name}</div>
+                        <div class="status-indicator ${getStatusClass(service.status)}" title="${statusText}"></div>
+                    </div>
+                    <div style="margin-bottom: 15px; color: #888; font-size: 0.9em;">${service.description}</div>
+                    <div class="service-details">
+                        <div><strong>Status:</strong> <span>${statusText}</span></div>
+                        <div><strong>URL:</strong> <span>${service.url}</span></div>
+                        ${details}
+                    </div>
+                </div>
+            `;
+        }
+        
+        async function refreshAll() {
+            const grid = document.getElementById('servicesGrid');
+            grid.innerHTML = '<div class="loading">Checking services...</div>';
+            
+            const results = await Promise.all(services.map(checkService));
+            
+            grid.innerHTML = results.map(formatServiceCard).join('');
+            
+            document.getElementById('lastUpdate').textContent = 
+                `Last updated: ${new Date().toLocaleString()}`;
+        }
+        
+        function toggleAutoRefresh() {
+            const btn = document.getElementById('autoRefreshBtn');
+            
+            if (isAutoRefresh) {
+                clearInterval(autoRefreshInterval);
+                isAutoRefresh = false;
+                btn.textContent = '⏰ Auto Refresh: OFF';
+                btn.className = 'btn auto-refresh';
+            } else {
+                autoRefreshInterval = setInterval(refreshAll, 10000); // 10 seconds
+                isAutoRefresh = true;
+                btn.textContent = '⏰ Auto Refresh: ON (10s)';
+                btn.className = 'btn';
+            }
+        }
+        
+        // Initial load
+        refreshAll();
+    </script>
+</body>
+</html>
