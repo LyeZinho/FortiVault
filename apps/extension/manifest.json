@@ -1,0 +1,37 @@
+{
+  "manifest_version": 3,
+  "name": "FortiVault",
+  "version": "1.0.0",
+  "description": "Zero-Knowledge Password Manager - Browser Extension",
+  "default_locale": "en",
+  "action": {
+    "default_popup": "src/popup/popup.html",
+    "default_title": "FortiVault"
+  },
+  "background": {
+    "service_worker": "src/background/background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["src/content/content.js"],
+      "css": ["src/content/content.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "permissions": [
+    "storage",
+    "activeTab",
+    "nativeMessaging"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["src/popup/*", "icons/*"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

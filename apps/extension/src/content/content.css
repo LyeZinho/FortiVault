@@ -1,0 +1,68 @@
+/* FortiVault Content Script - Styles */
+
+:root {
+  --fv-blue: #3B82F6;
+  --fv-black: #000000;
+}
+
+#fortivault-autofill-menu {
+  position: fixed;
+  z-index: 2147483647;
+  background: var(--fv-black);
+  border: 3px solid var(--fv-blue);
+  box-shadow: 6px 6px 0 var(--fv-blue);
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  min-width: 220px;
+}
+
+#fortivault-autofill-menu .menu-header {
+  background: #F3F4F6;
+  color: var(--fv-black);
+  padding: 10px 14px;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  border-bottom: 3px solid var(--fv-black);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#fortivault-autofill-menu .menu-item {
+  padding: 12px 14px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  border-bottom: 1px solid #333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background 0.1s;
+}
+
+#fortivault-autofill-menu .menu-item:last-child {
+  border-bottom: none;
+}
+
+#fortivault-autofill-menu .menu-item:hover {
+  background: var(--fv-blue);
+}
+
+#fortivault-autofill-menu .menu-item .type {
+  font-size: 9px;
+  background: #333;
+  padding: 3px 8px;
+  border: 1px solid #666;
+}
+
+#fortivault-autofill-menu .close-btn {
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+  line-height: 1;
+}
+
+#fortivault-autofill-menu .close-btn:hover {
+  color: var(--fv-blue);
+}

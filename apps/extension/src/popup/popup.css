@@ -1,0 +1,323 @@
+/* FortiVault Browser Extension - Neobrutalist Design */
+
+:root {
+  --neo-black: #000000;
+  --neo-blue: #3B82F6;
+  --neo-gray: #F3F4F6;
+  --neo-white: #FFFFFF;
+  --neo-dark-gray: #1E1E1E;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  background-color: var(--neo-black);
+  color: var(--neo-white);
+  width: 360px;
+  min-height: 480px;
+}
+
+.popup-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 480px;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: var(--neo-gray);
+  border-bottom: 4px solid var(--neo-white);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo-text {
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+.status-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border: 2px solid var(--neo-black);
+  font-size: 10px;
+  font-weight: bold;
+  background-color: #666;
+}
+
+.status-badge.connected {
+  background-color: var(--neo-blue);
+  color: var(--neo-white);
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #999;
+}
+
+.status-badge.connected .status-dot {
+  background-color: var(--neo-white);
+}
+
+/* Main */
+.main {
+  flex: 1;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Search */
+.search-section {
+  width: 100%;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 16px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: bold;
+  background-color: var(--neo-gray);
+  border: 3px solid var(--neo-white);
+  color: var(--neo-black);
+  outline: none;
+}
+
+.search-input::placeholder {
+  color: #666;
+}
+
+.search-input:focus {
+  border-color: var(--neo-blue);
+  box-shadow: 4px 4px 0 var(--neo-blue);
+}
+
+/* Quick Actions */
+.quick-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.action-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: bold;
+  border: 2px solid var(--neo-white);
+  cursor: pointer;
+  transition: all 0.1s;
+}
+
+.action-btn:first-child {
+  background-color: var(--neo-black);
+  color: var(--neo-white);
+  box-shadow: 3px 3px 0 var(--neo-white);
+}
+
+.action-btn:first-child:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--neo-white);
+}
+
+.action-btn:last-child {
+  background-color: var(--neo-blue);
+  color: var(--neo-white);
+  border-color: var(--neo-black);
+  box-shadow: 3px 3px 0 var(--neo-black);
+}
+
+.action-btn:last-child:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--neo-black);
+}
+
+/* Secrets Section */
+.secrets-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.section-title {
+  font-size: 10px;
+  font-weight: bold;
+  color: #666;
+  letter-spacing: 1px;
+}
+
+.secrets-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.secret-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px;
+  background-color: var(--neo-dark-gray);
+  border: 2px solid var(--neo-white);
+  cursor: pointer;
+  transition: all 0.1s;
+}
+
+.secret-item:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0 var(--neo-blue);
+}
+
+.secret-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.secret-type {
+  font-size: 8px;
+  font-weight: bold;
+  padding: 2px 6px;
+  background-color: var(--neo-blue);
+  color: var(--neo-white);
+  border: 1px solid var(--neo-black);
+}
+
+.secret-title {
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.secret-fields {
+  display: flex;
+  gap: 4px;
+}
+
+.field-btn {
+  flex: 1;
+  padding: 6px;
+  font-family: inherit;
+  font-size: 9px;
+  font-weight: bold;
+  background-color: var(--neo-black);
+  color: var(--neo-white);
+  border: 1px solid #333;
+  cursor: pointer;
+}
+
+.field-btn:hover {
+  background-color: var(--neo-blue);
+  border-color: var(--neo-blue);
+}
+
+/* Empty State */
+.empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  border: 2px dashed #333;
+  color: #666;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+/* Vault Selector */
+.vault-selector {
+  width: 100%;
+}
+
+.vault-select {
+  width: 100%;
+  padding: 10px 12px;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: bold;
+  background-color: var(--neo-gray);
+  border: 2px solid var(--neo-white);
+  color: var(--neo-black);
+  cursor: pointer;
+  outline: none;
+}
+
+.vault-select:focus {
+  border-color: var(--neo-blue);
+}
+
+/* Footer */
+.footer {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px;
+  background-color: var(--neo-black);
+  border-top: 2px solid #333;
+}
+
+.footer-btn {
+  flex: 1;
+  padding: 10px;
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: bold;
+  border: 2px solid var(--neo-white);
+  cursor: pointer;
+  background-color: var(--neo-blue);
+  color: var(--neo-white);
+  box-shadow: 3px 3px 0 var(--neo-white);
+}
+
+.footer-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--neo-white);
+}
+
+.footer-btn.secondary {
+  background-color: var(--neo-dark-gray);
+  color: var(--neo-white);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--neo-black);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border: 1px solid var(--neo-black);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--neo-blue);
+}

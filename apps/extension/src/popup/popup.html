@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FortiVault</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="3">
+          <path d="M12 2L2 7v10l10 5 10-5V7L12 2z"/>
+          <path d="M12 22V12"/>
+          <path d="M2 7l10 5 10-5"/>
+        </svg>
+        <span class="logo-text">FORTIVAULT</span>
+      </div>
+      <div class="status-badge" id="status-badge">
+        <span class="status-dot"></span>
+        <span class="status-text">OFFLINE</span>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+      <!-- Search -->
+      <div class="search-section">
+        <input 
+          type="text" 
+          id="search-input" 
+          placeholder="SEARCH VAULT..."
+          class="search-input"
+        >
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="quick-actions">
+        <button class="action-btn" id="btn-lock">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+          LOCK
+        </button>
+        <button class="action-btn" id="btn-refresh">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M23 4v6h-6"/>
+            <path d="M1 20v-6h6"/>
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+          </svg>
+          SYNC
+        </button>
+      </div>
+
+      <!-- Secrets List -->
+      <div class="secrets-section">
+        <h3 class="section-title">RECENT SECRETS</h3>
+        <div class="secrets-list" id="secrets-list">
+          <!-- Secrets will be populated here -->
+          <div class="empty-state">
+            <span>NO SECRETS FOUND</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vault Selector -->
+      <div class="vault-selector">
+        <select id="vault-select" class="vault-select">
+          <option value="personal">Personal</option>
+          <option value="engineering">Engineering</option>
+          <option value="devops">DevOps</option>
+        </select>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <button class="footer-btn" id="btn-open-app">OPEN DESKTOP APP</button>
+      <button class="footer-btn secondary" id="btn-settings">SETTINGS</button>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

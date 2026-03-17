@@ -1,0 +1,19 @@
+{
+  "name": "fortivault-extension",
+  "version": "1.0.0",
+  "description": "FortiVault Browser Extension - Zero-Knowledge Password Manager",
+  "private": true,
+  "scripts": {
+    "build": "echo 'No build required for Manifest V3'",
+    "dev": "echo 'Load unpacked extension in browser'",
+    "zip": "zip -r fortivault-extension.zip src/ manifest.json icons/ README.md"
+  },
+  "keywords": [
+    "password-manager",
+    "zero-knowledge",
+    "fortivault",
+    "browser-extension"
+  ],
+  "author": "FortiVault",
+  "license": "MIT"
+}
