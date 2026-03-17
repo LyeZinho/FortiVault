@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { Shield, Settings, LogOut, Globe, Monitor, Plus, Folder, Users, Share2, Search, Eye, Copy, Lock, X, Edit2, Save, Trash2, FileText, User as UserIcon, ExternalLink, Hash, Clock } from 'lucide-svelte';
+  import { Shield, Settings, LogOut, Globe, Monitor, Plus, Folder, Users, Share2, Search, Eye, Copy, Lock, X, Edit2, Save, Trash2, FileText, User as UserIcon, ExternalLink, Hash, Clock, Download, Terminal, Key } from 'lucide-svelte';
   import { translations } from '$lib/i18n';
   import { MOCK_VAULTS, MOCK_SECRETS, MOCK_USERS, MOCK_AUDIT_LOGS } from '$lib/constants';
-  import type { Language, Secret, Vault, User, AuditLog } from '$lib/types';
+  import type { Language, Secret, Vault, User, AuditLog, SecretType } from '$lib/types';
   import { onMount } from 'svelte';
   import * as OTPAuth from 'otpauth';
 
@@ -19,12 +19,15 @@
   let isEditing = $state(false);
   let language = $state<Language>('pt');
   let totpCodes = $state<Record<string, string>>({});
+  let copyFeedback = $state<string | null>(null);
   
   // Admin State
   let users = $state<User[]>(MOCK_USERS);
   let auditLogs = $state<AuditLog[]>(MOCK_AUDIT_LOGS);
   let isInviting = $state(false);
   let inviteEmail = $state('');
+  let isCreatingSecret = $state(false);
+  let newSecretType = $state<SecretType>('LOGIN');
   
   // Form State
   let editForm = $state<Partial<Secret>>({});
@@ -147,6 +150,54 @@
   function handleLogout() {
     window.location.href = '/';
   }
+
+  // Quick actions for secrets
+  async function copyToClipboard(text: string, feedbackId: string) {
+    try {
+      await navigator.clipboard.writeText(text);
+      copyFeedback = feedbackId;
+      setTimeout(() => copyFeedback = null, 2000);
+    } catch (e) {
+      console.error('Failed to copy:', e);
+    }
+  }
+
+  // Export secrets as .env file
+  function exportAsEnvFile() {
+    const envVars = secrets
+      .filter(s => s.type === 'ENV_VAR' && s.vaultId === activeVaultId)
+      .map(s => `${s.title}=${s.value || ''}`)
+      .join('\n');
+    
+    const blob = new Blob([envVars], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = '.env';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // Quick copy based on secret type
+  function quickCopy(secret: Secret, action: 'username' | 'password' | 'key' | 'value') {
+    let text = '';
+    switch (action) {
+      case 'username':
+        text = secret.username || '';
+        break;
+      case 'password':
+        text = secret.value || '';
+        break;
+      case 'key':
+        // For API keys, extract key from value
+        text = (secret.value || '').split('/')[0];
+        break;
+      case 'value':
+        text = secret.value || '';
+        break;
+    }
+    copyToClipboard(text, `${secret.id}-${action}`);
+  }
 </script>
 
 <div class="min-h-screen flex flex-col font-sans text-white">
@@ -187,9 +238,15 @@
   <div class="flex-1 flex overflow-hidden">
     <!-- Sidebar -->
     <aside class="w-72 bg-neo-gray border-r-4 border-white flex flex-col p-6 gap-8 overflow-y-auto">
-      <button class="bg-neo-blue text-neo-white neo-button neo-shadow flex items-center justify-center gap-2 py-4 text-lg">
+      <button onclick={() => isCreatingSecret = true} class="bg-neo-blue text-neo-white neo-button neo-shadow flex items-center justify-center gap-2 py-4 text-lg">
         <Plus size={24} strokeWidth={3} />
         {t.newSecret}
+      </button>
+
+      <!-- Quick Export .env Button -->
+      <button onclick={exportAsEnvFile} class="neo-button bg-neo-black text-white flex items-center justify-center gap-2 py-3 text-sm">
+        <Terminal size={18} />
+        EXPORT .ENV
       </button>
 
       <nav class="flex flex-col gap-6">
@@ -303,16 +360,63 @@
                   {/if}
 
                   <div class="flex gap-2">
+                    <!-- Quick actions based on secret type -->
+                    {#if secret.type === 'LOGIN'}
+                      {#if secret.username}
+                        <button 
+                          onclick={() => quickCopy(secret, 'username')}
+                          class="flex-1 py-2 font-bold text-xs bg-neo-black text-white hover:bg-neo-blue flex items-center justify-center gap-1 transition-colors"
+                          title="Copy Username"
+                        >
+                          <UserIcon size={14} />
+                          {copyFeedback === `${secret.id}-username` ? 'COPIED' : 'USER'}
+                        </button>
+                      {/if}
+                      {#if secret.value}
+                        <button 
+                          onclick={() => quickCopy(secret, 'password')}
+                          class="flex-1 py-2 font-bold text-xs bg-neo-black text-white hover:bg-neo-blue flex items-center justify-center gap-1 transition-colors"
+                          title="Copy Password"
+                        >
+                          <Key size={14} />
+                          {copyFeedback === `${secret.id}-password` ? 'COPIED' : 'PASS'}
+                        </button>
+                      {/if}
+                    {:else if secret.type === 'API_KEY'}
+                      <button 
+                        onclick={() => quickCopy(secret, 'key')}
+                        class="flex-1 py-2 font-bold text-xs bg-neo-black text-white hover:bg-neo-blue flex items-center justify-center gap-1 transition-colors"
+                        title="Copy API Key"
+                      >
+                        <Hash size={14} />
+                        {copyFeedback === `${secret.id}-key` ? 'COPIED' : 'KEY'}
+                      </button>
+                      <button 
+                        onclick={() => quickCopy(secret, 'value')}
+                        class="flex-1 py-2 font-bold text-xs bg-neo-black text-white hover:bg-neo-blue flex items-center justify-center gap-1 transition-colors"
+                        title="Copy Secret"
+                      >
+                        <Lock size={14} />
+                        {copyFeedback === `${secret.id}-value` ? 'COPIED' : 'SECRET'}
+                      </button>
+                    {:else if secret.type === 'ENV_VAR'}
+                      <button 
+                        onclick={() => exportAsEnvFile()}
+                        class="flex-1 py-2 font-bold text-xs bg-neo-black text-white hover:bg-neo-blue flex items-center justify-center gap-1 transition-colors"
+                        title="Export All as .env"
+                      >
+                        <Download size={14} />
+                        .ENV
+                      </button>
+                    {/if}
+                    
                     <button 
                       onclick={(e) => handleReveal(e, secret.id)}
                       disabled={!isDesktopConnected}
-                      class="flex-1 py-3 font-bold transition-all flex items-center justify-center gap-2 {isDesktopConnected ? 'bg-neo-black text-neo-white hover:bg-neo-blue' : 'bg-gray-400 text-white cursor-not-allowed'}"
+                      class="py-2 font-bold text-xs flex items-center justify-center gap-1 {isDesktopConnected ? 'bg-neo-blue text-white hover:bg-blue-600' : 'bg-gray-400 text-white cursor-not-allowed'}"
                     >
-                      <Eye size={18} />
-                      {revealingSecretId === secret.id ? `${t.revealing} (${autoLockTimer}s)` : t.reveal}
-                    </button>
-                    <button class="w-12 border-2 border-white flex items-center justify-center hover:bg-white/10 transition-colors">
-                      <Copy size={18} />
+                      <Eye size={14} />
+                      {revealingSecretId === secret.id ? 'VIEW' : 'REVEAL'}
                     </button>
                   </div>
                 </div>
@@ -450,6 +554,85 @@
         <div class="flex gap-4">
           <button onclick={() => isInviting = false} class="flex-1 neo-button bg-[#2A2A2A]">{t.cancel}</button>
           <button onclick={handleInviteUser} class="flex-1 neo-button bg-neo-blue text-white">{t.inviteUser}</button>
+        </div>
+      </div>
+    </div>
+  {/if}
+
+  <!-- Create Secret Modal -->
+  {#if isCreatingSecret}
+    <div class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-neo-black/90 backdrop-blur-md">
+      <div class="bg-[#1E1E1E] neo-border neo-shadow-lg w-full max-w-lg p-8 flex flex-col gap-6">
+        <div class="flex justify-between items-center">
+          <h2 class="text-3xl font-black uppercase tracking-tighter">{t.newSecret}</h2>
+          <button onclick={() => isCreatingSecret = false} class="hover:rotate-90 transition-transform">
+            <X size={24} strokeWidth={3} />
+          </button>
+        </div>
+        
+        <div class="flex flex-col gap-2">
+          <label class="font-mono text-xs font-bold opacity-50 uppercase">SECRET TYPE</label>
+          <div class="grid grid-cols-2 gap-2">
+            {#each ['LOGIN', 'API_KEY', 'ENV_VAR', 'SECURE_NOTE'] as type}
+              <button 
+                onclick={() => newSecretType = type as SecretType}
+                class="py-3 font-bold text-sm neo-border transition-all {newSecretType === type ? 'bg-neo-blue text-white' : 'bg-[#2A2A2A] hover:bg-neo-blue/20'}"
+              >
+                {type.replace('_', ' ')}
+              </button>
+            {/each}
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label class="font-mono text-xs font-bold opacity-50 uppercase" for="new-title">TITLE</label>
+          <input id="new-title" type="text" placeholder="AWS_PROD_SECRET" class="neo-input" />
+        </div>
+
+        {#if newSecretType === 'LOGIN'}
+          <div class="grid grid-cols-2 gap-4">
+            <div class="flex flex-col gap-2">
+              <label class="font-mono text-xs font-bold opacity-50 uppercase">USERNAME</label>
+              <input type="text" placeholder="user@email.com" class="neo-input" />
+            </div>
+            <div class="flex flex-col gap-2">
+              <label class="font-mono text-xs font-bold opacity-50 uppercase">URL</label>
+              <input type="text" placeholder="https://..." class="neo-input" />
+            </div>
+          </div>
+        {:else if newSecretType === 'ENV_VAR'}
+          <div class="flex flex-col gap-2">
+            <label class="font-mono text-xs font-bold opacity-50 uppercase">ENVIRONMENT</label>
+            <select class="neo-input">
+              <option>Development</option>
+              <option>Staging</option>
+              <option>Production</option>
+            </select>
+          </div>
+        {/if}
+
+        <div class="flex flex-col gap-2">
+          <label class="font-mono text-xs font-bold opacity-50 uppercase">
+            {newSecretType === 'LOGIN' ? 'PASSWORD' : newSecretType === 'API_KEY' ? 'API KEY' : newSecretType === 'ENV_VAR' ? 'VALUE' : 'NOTE CONTENT'}
+          </label>
+          <textarea rows="3" class="neo-input resize-none" placeholder="Secret value..."></textarea>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <label class="font-mono text-xs font-bold opacity-50 uppercase" for="new-tags">TAGS (COMMA SEPARATED)</label>
+          <input id="new-tags" type="text" placeholder="aws, prod, api" class="neo-input" />
+        </div>
+
+        <div class="bg-neo-blue/10 border-l-4 border-neo-blue p-4 font-mono text-[10px] text-neo-blue">
+          THIS SECRET WILL BE ENCRYPTED BY THE DESKTOP APP BEFORE STORAGE.
+        </div>
+
+        <div class="flex gap-4">
+          <button onclick={() => isCreatingSecret = false} class="flex-1 neo-button bg-[#2A2A2A]">{t.cancel}</button>
+          <button onclick={() => isCreatingSecret = false} class="flex-1 neo-button bg-neo-blue text-white flex items-center justify-center gap-2">
+            <Lock size={18} />
+            ENCRYPT & SAVE
+          </button>
         </div>
       </div>
     </div>
