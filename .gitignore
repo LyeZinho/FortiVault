@@ -3,5 +3,8 @@
 worktrees/
 node_modules/
 dist/
+.svelte-kit/
 .env
 .env.local
+*.log
+.DS_Store

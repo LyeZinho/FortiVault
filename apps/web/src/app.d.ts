@@ -1,0 +1,2 @@
+# Default alias for $lib
+- '**/*'
