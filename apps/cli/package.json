@@ -1,0 +1,12 @@
+{
+  "name": "fortivault-cli",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "cargo build --release --manifest-path ./Cargo.toml",
+    "dev": "cargo run --manifest-path ./Cargo.toml",
+    "clean": "cargo clean --manifest-path ./Cargo.toml"
+  },
+  "dependencies": {}
+}

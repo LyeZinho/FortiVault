@@ -7,7 +7,7 @@ use tokio::net::{TcpListener, TcpStream};
 use tokio::sync::broadcast;
 use tokio_tungstenite::{accept_async, tungstenite::Message};
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(tag = "type")]
 pub enum WsMessage {
     #[serde(rename = "PING")]
@@ -22,6 +22,21 @@ pub enum WsMessage {
     KeyExchange { public_key: String },
     #[serde(rename = "KEY_EXCHANGE_ACK")]
     KeyExchangeAck { session_key: String },
+    #[serde(rename = "SECRETS_REQUEST")]
+    SecretsRequest { vault_id: String, env_prefix: Option<String> },
+    #[serde(rename = "SECRETS_RESPONSE")]
+    SecretsResponse { secrets: Vec<Secret> },
+    #[serde(rename = "ERROR")]
+    Error { message: String },
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct Secret {
+    pub id: String,
+    pub key: String,
+    pub value: String,
+    #[serde(rename = "type")]
+    pub secret_type: String,
 }
 
 /// Start WebSocket server on localhost
@@ -80,6 +95,32 @@ async fn handle_connection(stream: TcpStream, tx: broadcast::Sender<String>) -> 
                                     // TODO: Generate session key, encrypt with client's public key
                                     let response = serde_json::to_string(&WsMessage::KeyExchangeAck {
                                         session_key: "SESSION_KEY_PLACEHOLDER".to_string()
+                                    }).unwrap();
+                                    write.send(Message::Text(response)).await?;
+                                }
+                                WsMessage::SecretsRequest { vault_id, env_prefix: _ } => {
+                                    tracing::info!("Secrets request for vault: {}", vault_id);
+                                    // TODO: Load secrets from vault, decrypt them, and return
+                                    // For now, return empty secrets - in production this would:
+                                    // 1. Check authentication
+                                    // 2. Load encrypted secrets from storage
+                                    // 3. Decrypt using the user's master key
+                                    // 4. Return the decrypted secrets
+                                    let response = serde_json::to_string(&WsMessage::SecretsResponse {
+                                        secrets: vec![
+                                            Secret {
+                                                id: "demo-1".to_string(),
+                                                key: "DATABASE_URL".to_string(),
+                                                value: "postgresql://localhost:5432/db".to_string(),
+                                                secret_type: "ENV_VAR".to_string(),
+                                            },
+                                            Secret {
+                                                id: "demo-2".to_string(),
+                                                key: "API_KEY".to_string(),
+                                                value: "sk-demo-key-12345".to_string(),
+                                                secret_type: "API_KEY".to_string(),
+                                            },
+                                        ]
                                     }).unwrap();
                                     write.send(Message::Text(response)).await?;
                                 }
