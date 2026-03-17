@@ -1,0 +1,5 @@
+{
+  "name": "FORTIVAULT",
+  "description": "A Neobrutalist secret manager for passwords, API keys, and environment variables.",
+  "requestFramePermissions": []
+}
