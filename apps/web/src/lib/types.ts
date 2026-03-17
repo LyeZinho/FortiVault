@@ -46,6 +46,25 @@ export interface AuditLog {
 
 export type Language = 'en' | 'es' | 'pt';
 
+export type RecoveryShareHolderRole = 'USER' | 'ADMIN' | 'COLLEAGUE' | 'EXTERNAL';
+
+export interface RecoveryShareHolder {
+  id: string;
+  name: string;
+  email?: string;
+  role: RecoveryShareHolderRole;
+  shareEncrypted?: string;
+  verified: boolean;
+}
+
+export interface RecoveryConfig {
+  threshold: number;
+  totalShares: number;
+  shareHolders: RecoveryShareHolder[];
+  createdAt: string;
+  status: 'ACTIVE' | 'PENDING' | 'USED';
+}
+
 export interface Translations {
   title: string;
   newSecret: string;

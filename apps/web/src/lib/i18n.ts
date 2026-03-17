@@ -49,7 +49,20 @@ export const translations: Record<Language, Translations> = {
     unlock: 'UNLOCK VAULT',
     loginTitle: 'SECURE ACCESS',
     loginSubtitle: 'ENTER YOUR MASTER PASSWORD TO DECRYPT THE VAULT',
-    errorLogin: 'INVALID MASTER PASSWORD'
+    errorLogin: 'INVALID MASTER PASSWORD',
+    // Recovery
+    recovery: 'DISASTER RECOVERY',
+    recoverySetup: 'SETUP RECOVERY',
+    recoveryThreshold: 'THRESHOLD (K)',
+    recoveryShares: 'TOTAL SHARES (N)',
+    recoveryGenerate: 'GENERATE SHARES',
+    recoveryDownload: 'DOWNLOAD SHARE',
+    recoveryVerify: 'VERIFY SHARE',
+    recoveryStatus: 'RECOVERY STATUS',
+    recoveryActive: 'RECOVERY CONFIGURED',
+    recoveryNotSetup: 'NOT CONFIGURED',
+    recoveryShareGenerated: 'SHARE GENERATED',
+    recoveryInstructions: 'DISTRIBUTE SHARES TO TRUSTED PARTIES'
   },
   es: {
     title: 'FORTIVAULT',
@@ -99,7 +112,20 @@ export const translations: Record<Language, Translations> = {
     unlock: 'DESBLOQUEAR BÓVEDA',
     loginTitle: 'ACCESO SEGURO',
     loginSubtitle: 'INGRESE SU CONTRASEÑA MAESTRA PARA DESCRIPTOGRAFAR LA BÓVEDA',
-    errorLogin: 'CONTRASEÑA MAESTRA INVÁLIDA'
+    errorLogin: 'CONTRASEÑA MAESTRA INVÁLIDA',
+    // Recovery
+    recovery: 'RECUPERACIÓN DE DESASTRES',
+    recoverySetup: 'CONFIGURAR RECUPERACIÓN',
+    recoveryThreshold: 'UMBRAL (K)',
+    recoveryShares: 'TOTAL DE ACCIONES (N)',
+    recoveryGenerate: 'GENERAR ACCIONES',
+    recoveryDownload: 'DESCARGAR ACCIÓN',
+    recoveryVerify: 'VERIFICAR ACCIÓN',
+    recoveryStatus: 'ESTADO DE RECUPERACIÓN',
+    recoveryActive: 'RECUPERACIÓN CONFIGURADA',
+    recoveryNotSetup: 'NO CONFIGURADO',
+    recoveryShareGenerated: 'ACCIÓN GENERADA',
+    recoveryInstructions: 'DISTRIBUIR ACCIONES A PARTES DE CONFIANZA'
   },
   pt: {
     title: 'FORTIVAULT',
@@ -149,6 +175,19 @@ export const translations: Record<Language, Translations> = {
     unlock: 'DESBLOQUEAR COFRE',
     loginTitle: 'ACESSO SEGURO',
     loginSubtitle: 'DIGITE SUA SENHA MESTRA PARA DESCRIPTOGRAFAR O COFRE',
-    errorLogin: 'SENHA MESTRA INVÁLIDA'
+    errorLogin: 'SENHA MESTRA INVÁLIDA',
+    // Recovery
+    recovery: 'RECUPERAÇÃO DE DESASTRE',
+    recoverySetup: 'CONFIGURAR RECUPERAÇÃO',
+    recoveryThreshold: 'LIMITE (K)',
+    recoveryShares: 'TOTAL DE PARTES (N)',
+    recoveryGenerate: 'GERAR PARTES',
+    recoveryDownload: 'BAIXAR PARTE',
+    recoveryVerify: 'VERIFICAR PARTE',
+    recoveryStatus: 'STATUS DE RECUPERAÇÃO',
+    recoveryActive: 'RECUPERAÇÃO CONFIGURADA',
+    recoveryNotSetup: 'NÃO CONFIGURADO',
+    recoveryShareGenerated: 'PARTE GERADA',
+    recoveryInstructions: 'DISTRIBUIR PARTES A PARTES CONFIÁVEIS'
   }
 };
