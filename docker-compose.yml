@@ -1,11 +1,33 @@
 version: '3.8'
 
 services:
+  fv-mail:
+    image: axllent/mailpit:latest
+    container_name: fv-mail-${INSTANCE_ID:-default}
+    networks:
+      - fv-internal
+    environment:
+      MP_MAX_MESSAGES: 500
+      MP_RETENTION_HOURS: 720
+      MP_DATABASE: /data/mailpit.db
+      MP_LISTEN: 0.0.0.0:1025
+      MP_UI_BIND_ADDR: 0.0.0.0:8025
+      MP_IMAP_BIND_ADDR: 0.0.0.0:1143
+    volumes:
+      - fv-mail-data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8025"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: fortivault-backend
+    container_name: fortivault-backend-${INSTANCE_ID:-default}
     ports:
       - "8000:8000"
     environment:
@@ -15,10 +37,17 @@ services:
       - ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000,http://frontend:3000
       - HOST=0.0.0.0
       - PORT=8000
+      - SMTP_HOST=fv-mail
+      - SMTP_PORT=1025
+      - MAIL_FROM=noreply@fortivault.local
+      - WEBMAIL_URL=http://localhost:8025
     volumes:
       - vault_data:/app/data
       - backup_data:/app/backups
       - ./backend/logs:/app/logs
+    depends_on:
+      fv-mail:
+        condition: service_healthy
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/health')"]
@@ -27,6 +56,7 @@ services:
       retries: 3
       start_period: 40s
     networks:
+      - fv-internal
       - fortivault-network
 
   frontend:
@@ -35,7 +65,7 @@ services:
       dockerfile: Dockerfile.frontend
       args:
         - NEXT_PUBLIC_API_URL=http://backend:8000
-    container_name: fortivault-frontend
+    container_name: fortivault-frontend-${INSTANCE_ID:-default}
     ports:
       - "3000:3000"
     environment:
@@ -51,7 +81,7 @@ services:
 
   nginx:
     image: nginx:alpine
-    container_name: fortivault-proxy
+    container_name: fortivault-proxy-${INSTANCE_ID:-default}
     ports:
       - "80:80"
       - "443:443"
@@ -71,7 +101,12 @@ volumes:
     driver: local
   backup_data:
     driver: local
+  fv-mail-data:
+    driver: local
 
 networks:
+  fv-internal:
+    driver: bridge
+    internal: true
   fortivault-network:
     driver: bridge
