@@ -34,7 +34,7 @@ services:
       - DATABASE_PATH=/app/data/vault.db
       - SECRET_KEY=${SECRET_KEY:-your-super-secret-key-min-32-characters-long}
       - DEBUG=false
-      - ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000,http://frontend:3000
+      - ALLOWED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000,http://frontend:3000,http://nestjs-api:3001
       - HOST=0.0.0.0
       - PORT=8000
       - SMTP_HOST=fv-mail
@@ -79,6 +79,33 @@ services:
     networks:
       - fortivault-network
 
+  nestjs-api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: fortivault-nestjs-api-${INSTANCE_ID:-default}
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - SMTP_HOST=fv-mail
+      - SMTP_PORT=1025
+      - MAIL_FROM=noreply@fortivault.local
+      - WEBMAIL_URL=http://localhost:8025
+    depends_on:
+      fv-mail:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O-", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    networks:
+      - fv-internal
+      - fortivault-network
+
   nginx:
     image: nginx:alpine
     container_name: fortivault-proxy-${INSTANCE_ID:-default}
@@ -92,6 +119,7 @@ services:
     depends_on:
       - frontend
       - backend
+      - nestjs-api
     restart: unless-stopped
     networks:
       - fortivault-network
