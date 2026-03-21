@@ -52,12 +52,33 @@ fortivault run "npm run dev"
 
 -----
 
+### 📧 Built-in Email Sandbox
+
+Fortivault includes an **integrated mail system** using Mailpit:
+
+* **Zero external dependencies** — No SendGrid, AWS SES, or Sendmail required
+* **Isolated mailboxes** — Each user has `user@fortivault.local`
+* **Air-gapped friendly** — Works in offline/isolated networks
+* **Automatic retention** — Emails expire after 30 days
+* **Admin dashboard** — View queue, manage mailboxes at http://localhost:8025
+
+**Email workflows:**
+- Account activation
+- Password reset notifications
+- Department invitations
+- Security alerts
+
+[Setup Guide →](docs/MAIL_SETUP.md)
+
+-----
+
 ## 🛠️ Tech Stack
 
 * **Frontend:** [SvelteKit](https://kit.svelte.dev/) + [TailwindCSS](https://tailwindcss.com/)
 * **Backend:** [NestJS](https://nestjs.com/) + [PostgreSQL](https://www.postgresql.org/)
 * **Core & Desktop:** [Rust](https://www.rust-lang.org/) + [Tauri](https://tauri.app/)
 * **Queue/Cache:** [BullMQ](https://docs.bullmq.io/) + [Redis](https://redis.io/)
+* **Email:** [Mailpit](https://mailpit.io/) (internal sandbox, zero external dependency)
 * **Monorepo:** [Turborepo](https://turbo.build/)
 * **Validation:** [Zod](https://zod.dev/)
 
