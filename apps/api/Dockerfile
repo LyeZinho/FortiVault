@@ -39,6 +39,9 @@ RUN pnpm install --frozen-lockfile --prod
 # Copy built app from builder
 COPY --from=builder /app/apps/api/dist ./dist
 
+# Copy email templates
+COPY --from=builder /app/apps/api/src/mail/templates ./dist/mail/templates
+
 # Create non-root user
 RUN addgroup -g 1001 -S nodejs && \
     adduser -S nodejs -u 1001
