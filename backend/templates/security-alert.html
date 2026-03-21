@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { border: 4px solid #d32f2f; padding: 20px; background: #d32f2f; color: #fff; }
+        .content { border-left: 4px solid #d32f2f; border-right: 4px solid #d32f2f; border-bottom: 4px solid #d32f2f; padding: 20px; }
+        .alert { background: #ffebee; border-left: 4px solid #d32f2f; padding: 15px; margin: 20px 0; }
+        .footer { font-size: 12px; color: #666; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚠️ Security Alert</h1>
+        </div>
+        <div class="content">
+            <h2>{{ alert_type }}</h2>
+            <div class="alert">
+                <p><strong>Alert Details:</strong></p>
+                <ul>
+                {% for key, value in details.items() %}
+                    <li><strong>{{ key }}:</strong> {{ value }}</li>
+                {% endfor %}
+                </ul>
+            </div>
+            <p><strong>Action Required:</strong> If this activity wasn't authorized, change your password immediately and contact support.</p>
+            <p>For your security, we recommend:</p>
+            <ul>
+                <li>Review recent account activity</li>
+                <li>Update your password</li>
+                <li>Enable or verify 2FA is active</li>
+                <li>Check connected devices</li>
+            </ul>
+        </div>
+        <div class="footer">
+            <p>Fortivault - Industrial-Grade Secret Manager</p>
+            <p>This is an automated security alert. Do not reply to this email.</p>
+        </div>
+    </div>
+</body>
+</html>

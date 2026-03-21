@@ -23,6 +23,7 @@ import uvicorn
 from auth import auth_manager, Token, User
 from database import db
 from crypto_utils import crypto_advanced
+from mail import mail_service
 
 # Initialize FastAPI app
 app = FastAPI(
