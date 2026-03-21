@@ -16,6 +16,7 @@
     "@nestjs/jwt": "^10.0.0",
     "@nestjs/passport": "^10.0.0",
     "@nestjs/bullmq": "^10.0.0",
+    "@nestjs-modules/mailer": "^1.11.0",
     "bullmq": "^5.0.0",
     "ioredis": "^5.0.0",
     "drizzle-orm": "^0.30.0",
@@ -25,7 +26,9 @@
     "passport-jwt": "^4.0.0",
     "bcrypt": "^5.1.0",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "nodemailer": "^6.9.7",
+    "hbs": "^4.2.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",
@@ -34,6 +37,7 @@
     "@types/node": "^20.0.0",
     "@types/passport-jwt": "^4.0.0",
     "@types/bcrypt": "^5.0.0",
+    "@types/nodemailer": "^6.4.14",
     "typescript": "^5.0.0",
     "eslint": "^8.0.0"
   }
