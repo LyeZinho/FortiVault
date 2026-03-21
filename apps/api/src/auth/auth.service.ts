@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { UserCreatedEvent } from '../common/events/user-created.event';
 
 @Injectable()
 export class AuthService {
-  // Zero-Knowledge: Backend never sees actual passwords
-  // Only handles session tokens and public key registration
-  
+  constructor(private eventEmitter: EventEmitter2) {}
+
   async validateToken(token: string): Promise<{ userId: string; email: string } | null> {
     // TODO: Validate JWT token from Redis/DB
     return null;
@@ -22,5 +23,17 @@ export class AuthService {
 
   async revokeSession(token: string): Promise<void> {
     // TODO: Remove session from Redis
+  }
+
+  async emitUserCreatedEvent(
+    userId: string,
+    email: string,
+    activationToken: string,
+    activationUrl: string,
+  ): Promise<void> {
+    this.eventEmitter.emit(
+      'user.created',
+      new UserCreatedEvent(userId, email, activationToken, activationUrl),
+    );
   }
 }
